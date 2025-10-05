@@ -1,6 +1,7 @@
 
 
 name: Build Executable with Nuitka
+
 on:
   release:
     types: [created]
@@ -17,28 +18,28 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # Specify the Python version you are using
-          cache: 'pip' # Cache pip dependencies to speed up future builds
+          python-version: '3.10'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install nuitka
+
+      # === MODIFIED STEP ===
       - name: Compile with Nuitka
         run: |
-          # Define the base Nuitka command with all necessary plugins.
-          # --standalone: Creates a self-contained folder.
-          # --onefile: Compresses the standalone folder into a single executable.
-          # --plugin-enable=rich: Crucial for ensuring the TUI library works correctly.
-          # --plugin-enable=requests: Helps bundle SSL certificates and other hidden dependencies.
-          # --output-dir=dist: Specifies a clean output directory for the artifacts.
-          nuitka_command="python -m nuitka --standalone --onefile --plugin-enable=rich --plugin-enable=requests --output-dir=dist"
+          # The command is corrected here.
+          # We replaced the non-existent '--plugin-enable=rich' with '--include-package=rich'.
+          # We also removed the unnecessary '--plugin-enable=requests'.
+          nuitka_command="python -m nuitka --standalone --onefile --include-package=rich --output-dir=dist"
 
-          # Add a Windows-specific flag to disable the console window that appears behind the TUI.
+          # Add a Windows-specific flag to disable the background console.
           if [ "$RUNNER_OS" == "Windows" ]; then
             nuitka_command+=" --windows-disable-console"
           fi
@@ -47,23 +48,23 @@ jobs:
           nuitka_command+=" main.py"
           echo "Running command: $nuitka_command"
           $nuitka_command
-          
+
       - name: Rename Artifact
         shell: bash
         run: |
           cd dist
           if [ "$RUNNER_OS" == "Windows" ]; then
             mv main.exe Minecraft-Mod-Downloader-Windows.exe
-            echo "ASSET_NAME=MCMod-Downloader-Windows.exe" >> $GITHUB_ENV
-            echo "ASSET_PATH=dist/MCMod-Downloader-Windows.exe" >> $GITHUB_ENV
+            echo "ASSET_NAME=Minecraft-Mod-Downloader-Windows.exe" >> $GITHUB_ENV
+            echo "ASSET_PATH=dist/Minecraft-Mod-Downloader-Windows.exe" >> $GITHUB_ENV
           elif [ "$RUNNER_OS" == "Linux" ]; then
             mv main.bin Minecraft-Mod-Downloader-Linux
-            echo "ASSET_NAME=MCMod-Downloader-Linux" >> $GITHUB_ENV
-            echo "ASSET_PATH=dist/MCMod-Downloader-Linux" >> $GITHUB_ENV
+            echo "ASSET_NAME=Minecraft-Mod-Downloader-Linux" >> $GITHUB_ENV
+            echo "ASSET_PATH=dist/Minecraft-Mod-Downloader-Linux" >> $GITHUB_ENV
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            mv main.bin MCMod-Downloader-macOS
-            echo "ASSET_NAME=MCMod-Downloader-macOS" >> $GITHUB_ENV
-            echo "ASSET_PATH=dist/MCMod-Downloader-macOS" >> $GITHUB_ENV
+            mv main.bin Minecraft-Mod-Downloader-macOS
+            echo "ASSET_NAME=Minecraft-Mod-Downloader-macOS" >> $GITHUB_ENV
+            echo "ASSET_PATH=dist/Minecraft-Mod-Downloader-macOS" >> $GITHUB_ENV
           fi
           cd ..
 
