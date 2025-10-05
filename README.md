@@ -59,7 +59,7 @@ All major settings can be easily adjusted in the `config.py` file:
 -   `DEFAULT_MINECRAFT_VERSION`: Set a fallback game version in case the script cannot infer it from your modlist.
 -   `CF_API_KEY`: An API key for CurseForge is included. You can replace it with your own if needed.
 
-```
+
 
 ## 📜License
 
