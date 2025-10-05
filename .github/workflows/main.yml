@@ -1,4 +1,4 @@
-
+# .github/workflows/build.yml
 
 name: Build Executable with Nuitka
 
@@ -31,13 +31,12 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      # === MODIFIED STEP ===
+      # === FINAL CORRECTED STEP ===
       - name: Compile with Nuitka
         run: |
-          # The command is corrected here.
-          # We replaced the non-existent '--plugin-enable=rich' with '--include-package=rich'.
-          # We also removed the unnecessary '--plugin-enable=requests'.
-          nuitka_command="python -m nuitka --standalone --onefile --include-package=rich --output-dir=dist"
+          # The command is corrected to use '--include-module'.
+          # This is the standard way to ensure a problematic library like 'rich' is fully included.
+          nuitka_command="python -m nuitka --standalone --onefile --include-module=rich --output-dir=dist"
 
           # Add a Windows-specific flag to disable the background console.
           if [ "$RUNNER_OS" == "Windows" ]; then
